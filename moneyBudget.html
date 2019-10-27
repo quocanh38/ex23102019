@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Money Budget</title>
+    <style>
+        .container {
+            width: 200px;
+            margin: auto;
+        }
+
+        .remain {
+            float: right;
+            color: red;
+        }
+
+        div {
+            display: block;
+            margin: 10px 0;
+        }
+
+        input {
+            float: right;
+            height: 20px;
+        }
+
+        button {
+            float: right;
+            width: 50px;
+            height: 30px;
+        }
+
+        body ul {
+            margin-top: 50px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        let appState = {
+            budget: 5000000,
+            expenses: [
+                {
+                    name: "an sang",
+                    price: 25000
+                },
+                {
+                    name: "cafe sang",
+                    price: 15000
+                }
+            ]
+        }
+
+        function render(state) {
+            let body = document.querySelector("body")
+            const totalPay = state.expenses.reduce(function (sum, item) {
+                sum += item.price
+                return sum
+            }, 0)
+            const remain = state.budget - totalPay
+
+            let template = `
+            <div class="container">
+            <h1>Money Budget</h1>
+            <div class="add-expense-form">
+                <span class="budget">${state.budget}</span>
+                <span class="remain">${remain}</span>
+            </div>
+            <div>
+            <div>
+                <span>For</span>
+                <input class="expense-name-input" type="text" />
+            </div>
+            <div>
+                <span>$</span>
+                <input class="expense-price-input" type="number">
+            </div>
+            <button class="add-expense-button ${remain <= 0 ? "hidden" : ""}">Add</button>
+            </div>
+            <ul class="expense-items">
+                ${renderExpenseItems(state)}
+            </ul>
+            </div>`
+            body.innerHTML = template
+
+            bindEvents()
+        }
+
+        function renderExpenseItems(state) {
+            let epxensesStringArr = state.expenses.map(function (item) {
+                return `<li>${item.name} : ${item.price}</li>`
+            })
+            return epxensesStringArr.join("")
+        }
+
+        function bindEvents() {
+            document.querySelector(".add-expense-button").addEventListener("click", function (event) {
+                event.preventDefault();
+                const expenseName = document.querySelector(".expense-name-input").value
+                const expensePrice = document.querySelector(".expense-price-input").value
+                const remain = document.querySelector(".remain").innerText
+
+                if (invalidInput(expenseName) || invalidInput(expensePrice))
+                    return
+
+                if (expensePrice > Number(remain)) {
+                    alert("You do not have enough money!")
+                    return
+                }
+
+                let newExpense = {
+                    name: expenseName,
+                    price: Number(expensePrice)
+                }
+                appState.expenses.push(newExpense)
+                render(appState)
+            })
+        }
+
+        function invalidInput(value) {
+            return value.trim() === "";
+        }
+
+        render(appState);
+    </script>
+</body>
+
+</html>
