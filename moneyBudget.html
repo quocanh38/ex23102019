@@ -108,7 +108,7 @@
                 const expensePrice = document.querySelector(".expense-price-input").value
                 const remain = document.querySelector(".remain").innerText
 
-                if (invalidInput(expenseName) || invalidInput(expensePrice))
+                if (invalidInput(expenseName) || invalidInput(expensePrice) || Number(expensePrice) < 0)
                     return
 
                 if (expensePrice > Number(remain)) {
